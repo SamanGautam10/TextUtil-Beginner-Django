@@ -3,18 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <title>Home Page</title>
-</head>
-<body>
-    <h1>Welcome to the text analyzer. Enter your text below.</h1><br>
-    <form action='analyze' method='post'> {% csrf_token %}
-        <textarea name='text' style='width: 1421px; height: 172px;'></textarea><br>
-        <input type="checkbox" name="removepunc">Remove Punctuation<br>
-        <input type="checkbox" name="fullcap">Capitalize Sentence<br>
-        <input type="checkbox" name="newlineremover">Remove new line<br>
-        <input type="checkbox" name="extraspaceremover">Remove Extra Space<br>
-        <input type="checkbox" name="charcounter">Count Character<br>
-        <button type="submit">Analyze Text</button>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-image: url('https://www.example.com/texteditor-background.jpg'); /* replace with a suitable image URL */
+            background-size: cover;
+            background-position: center;
+            font-family: Arial, sans-serif;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
 
+        h1 {
+            white-space: nowrap;
+            overflow: hidden;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        .typewriter {
+            display: inline-block;
+            border-right: 0.15em solid black;
+            animation: blink-caret 1.5s step-end infinite;
+        }
+
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: black; }
+        }
+    </style>
+</head>
+<body class="bg-gray-800 text-white">
+    <h1 class="text-3xl font-bold mb-6"><span id="animated-text" class="typewriter"></span></h1>
+    <form action='analyze' method='post' class="bg-white p-8 rounded-lg shadow-lg w-11/12 md:w-1/2 lg:w-1/3">
+        {% csrf_token %}
+        <textarea name='text' placeholder="Enter your text here..." class="w-full h-32 p-4 border border-gray-300 rounded-lg mb-4 resize-none text-black"></textarea>
+        <label class="block mb-2 text-black"><input type="checkbox" name="removepunc" class="mr-2">Remove Punctuation</label>
+        <label class="block mb-2 text-black"><input type="checkbox" name="fullcap" class="mr-2">Capitalize Sentence</label>
+        <label class="block mb-2 text-black"><input type="checkbox" name="newlineremover" class="mr-2">Remove new line</label>
+        <label class="block mb-2 text-black"><input type="checkbox" name="extraspaceremover" class="mr-2">Remove Extra Space</label>
+        <label class="block mb-4 text-black"><input type="checkbox" name="charcounter" class="mr-2">Count Character</label>
+        <button type="submit" class="w-full bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600">Analyze Text</button>
     </form>
+    <script>
+        const messages = ["Welcome to the text analyzer", "Enter your text below"];
+        let messageIndex = 0;
+        let charIndex = 0;
+        const animatedText = document.getElementById("animated-text");
+        const form = document.querySelector('form');
+
+        function typeWriter() {
+            if (charIndex < messages[messageIndex].length) {
+                animatedText.textContent += messages[messageIndex].charAt(charIndex);
+                charIndex++;
+                setTimeout(typeWriter, 100);
+            } else {
+                setTimeout(eraseText, 2000);
+            }
+        }
+
+        function eraseText() {
+            if (charIndex > 0) {
+                animatedText.textContent = animatedText.textContent.slice(0, -1);
+                charIndex--;
+                setTimeout(eraseText, 50);
+            } else {
+                messageIndex = (messageIndex + 1) % messages.length;
+                setTimeout(typeWriter, 500);
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            form.classList.add('opacity-100');
+            typeWriter();
+        });
+    </script>
 </body>
 </html>
